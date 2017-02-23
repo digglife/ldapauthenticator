@@ -3,7 +3,7 @@ import re
 
 from jupyterhub.auth import Authenticator
 from tornado import gen
-from traitlets import Unicode, Int, Bool, List
+from traitlets import Unicode, Int, Bool, List, Union
 
 
 class LDAPAuthenticator(Authenticator):
@@ -55,7 +55,7 @@ class LDAPAuthenticator(Authenticator):
 
         Unicode Example:
             uid={username},ou=people,dc=wikimedia,dc=org
-        
+
         List Example:
             [
             	uid={username},ou=people,dc=wikimedia,dc=org,
@@ -163,7 +163,7 @@ class LDAPAuthenticator(Authenticator):
             ))
             conn = ldap3.Connection(server, user=userdn, password=password)
             return conn
-        
+
         # Protect against invalid usernames as well as LDAP injection attacks
         if not re.match(self.valid_username_regex, username):
             self.log.warn('username:%s Illegal characters in username, must match regex %s', username, self.valid_username_regex)
@@ -173,7 +173,7 @@ class LDAPAuthenticator(Authenticator):
         if password is None or password.strip() == '':
             self.log.warn('username:%s Login denied for blank password', username)
             return None
-        
+
         isBound = False
         self.log.debug("TYPE= '%s'",isinstance(self.bind_dn_template, list))
         # In case, there are multiple binding templates
@@ -186,7 +186,7 @@ class LDAPAuthenticator(Authenticator):
                     username=username,
                     userdn=userdn,
                     isBound=isBound
-                ))                
+                ))
                 if isBound:
                     break
         else:
