@@ -229,14 +229,18 @@ class LDAPAuthenticator(Authenticator):
                         search_filter=groupfilter,
                         attributes=groupattributes
                     ):
-                        return username
+                        return self.clean_name(username)
                 # If we reach here, then none of the groups matched
                 self.log.warn('username:%s User not in any of the allowed groups', username)
                 return None
             else:
-                return username
+                return self.clean_name(username)
         else:
             self.log.warn('Invalid password for user {username}'.format(
                 username=userdn,
             ))
             return None
+
+    def clean_name(self, username):
+        (user_id, _) = username.split('@')
+        return user_id
